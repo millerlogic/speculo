@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "outFile": "dist/speculo.js",
+        "sourceMap": true,
+        "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "strict": true,
+        "rootDir": "src",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es5"
+        ]
+    }
+}

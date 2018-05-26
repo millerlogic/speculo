@@ -1,0 +1,408 @@
+/*
+    Copyright (C) 2018 Christopher E. Miller
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this file,
+    You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
+
+.ns {
+    position: absolute;
+    overflow: hidden;
+    display: block;
+    box-sizing: border-box;
+    cursor: default;
+    margin: 0;
+    z-index: 100;
+    font: inherit;
+    user-drag: none;
+    -moz-user-drag: none;
+    -webkit-user-drag: none;
+    -ms-user-drag: none;
+}
+
+.nosel {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+div.ns-Surface {
+    background-color: white;
+    color: black;
+    padding: 0;
+}
+
+.ns-Surface::selection, .ns-Surface ::selection, .ns-Surface option:checked {
+    background-color: blue;
+    color: white;
+}
+
+div.ns-Surface > .ns.client {
+    width: 100%;
+    height: 100%;
+    background-color: inherit;
+}
+
+.ns.ns-Scrollable:focus, .ns.ns-Scrollable > .ns.client:focus {
+    outline: none;
+}
+    .ns.hscroll {
+        overflow-x: auto;
+    }
+    .ns.vscroll {
+        overflow-y: auto;
+}
+
+.ns-Surface.default {
+    box-shadow: 1px 1px 1px gray;
+}
+
+.ns.ns-Desktop, .ns.ns-Window {
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.25em;
+}
+
+.ns.ns-Desktop {
+    background-color: #F5F6F8;
+    color: #37474f;
+    touch-action: none;
+}
+
+.ns.ns-Window { /* inactive */
+    background-color: #E6E6E6;
+    box-shadow: 3px 3px 5px #BBBBBB;
+    -webkit-transition: box-shadow 0.25s linear, transform 0.1s linear;
+    transition: box-shadow 0.25s linear, transform 0.1s linear;
+    z-index: 200;
+}
+div.ns.ns-Window > .client {
+    background-color: white;
+}
+.ns.ns-Window.active {
+    /* background-color: #DFDFDF; */
+    background-color: #A7BCDC;
+    box-shadow: 3px 3px 5px #888888;
+}
+.ns.ns-Window.topmost {
+    z-index: 250;
+}
+.ns.ns-Window.topmost.minimized {
+    z-index: 200; /* Back to normal if minimized. */
+}
+.ns.ns-Window.owned-raise {
+    z-index: 210;
+}
+.ns.ns-Window.topmost.owned-raise {
+    z-index: 260;
+}
+
+.ns.ns-Window > .ns.caption { /* inactive */
+    background-color: #DADAD7;
+    width: 100%;
+    height: 23px; /* caption height */
+    z-index: 16777271; /* above all */
+    color: #5D5D5D;
+}
+.ns.ns-Window.active > .ns.caption {
+    color: black;
+}
+    .ns.ns-Window > .ns.caption > .text {
+        /* Not a .ns */
+        display: inline-block;
+        padding-left: 3px;
+        padding-right: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        /*text-align: center;*/
+        height: 23px; /* caption height */
+        line-height: 23px; /* caption height */
+    }
+    .ns.ns-Window > .ns.caption > .btn {
+        display: inline-block;
+        position: absolute;
+        top: 3px;
+        color: #6F6F6F;
+        padding: 0 1px;
+    }
+    .ns.ns-Window > .ns.caption > .btn:hover {
+        color: black;
+        background-color: #D0D0D0;
+        box-shadow: 0 0 5px #747474;
+    }
+/* large caption: */
+.ns.ns-Window > .ns.caption.large {
+    font-size: 1.4em;
+    height: 36px; /* large caption height */
+}
+    .ns.ns-Window > .ns.caption.large > .text {
+        height: 36px; /* large caption height */
+        line-height: 36px; /* large caption height */
+    }
+    .ns.ns-Window > .ns.caption.large > .btn {
+        top: 5px;
+    }
+/* small caption: */
+.ns.ns-Window > .ns.caption.small {
+    font-size: 0.6em;
+    height: 12px; /* small caption height */
+}
+    .ns.ns-Window > .ns.caption.small > .text {
+        height: 12px; /* small caption height */
+        line-height: 12px; /* small caption height */
+    }
+    .ns.ns-Window > .ns.caption.small > .btn {
+        top: 1px;
+    }
+
+.ns.ns-Window.minimized > .ns.client {
+    display: none; /* Hide the client when minimized. */
+}
+
+.ns.ns-Label {
+    background-color: transparent;
+}
+    .ns.ns-Label > .text {
+        display: table-cell;
+        height: inherit;
+        width: inherit;
+        overflow: hidden;
+    }
+    .ns.ns-Label > .text.ellipsis {
+        /* Note: ellipsis and valign are exclusive; and the text is forced single-line. */
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+@-moz-document url-prefix() {
+    button.ns {
+        /* Firefox buttons aren't padded like the other browsers, so customize them. */
+        padding: 0;
+        border: solid 1px gray;
+        border: solid 1px ButtonShadow;
+        background-color: #D3D3D3;
+        background-color: ButtonFace;
+        color: black;
+        color: ButtonText;
+    }
+}
+
+.ns.ns-TextBox, .ns.ns-SpecialInputBox {
+    cursor: initial;
+    resize: none;
+    padding: 4px;
+}
+
+.ns.ns-GroupBox {
+    border: outset 2px;
+}
+    .ns.ns-GroupBox > legend {
+        padding: 2px;
+    }
+    @-moz-document url-prefix() {
+        .ns.ns-GroupBox > .ns.client {
+            /* This fixes the position across browsers (namely, firefox) */
+            top: initial !important;
+            left: initial !important;
+        }
+    }
+
+.ns.ns-ProgressBar {
+    background-color: #eeeeee;
+}
+    .ns.ns-ProgressBar > .value {
+        background-color: #90caf9;
+    }
+
+.ns.ns-Card > .ns.client {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 2px 0 rgba(0,0,0,0.12), 0 2px 1px -2px rgba(0,0,0,0.2);
+}
+
+.ns.ns-TabControl {
+    background-color: #eeeeee;
+}
+.ns.ns-TabControl:focus {
+    outline: none;
+}
+    .ns.ns-TabControl > .tabs {
+        white-space: nowrap; /* Don't wrap tab labels. */
+        overflow: hidden;
+        width: 100%;
+    }
+        .ns.ns-TabControl > .tabs > label {
+            display: inline-block;
+            padding: 0.25em 0.5em;
+            border: solid 1px #D3D3D3;
+            margin-left: -1px; /* No border overlap. */
+            margin-top: -1px;
+        }
+        .ns.ns-TabControl > .tabs > label:hover {
+            cursor: pointer;
+        }
+        .ns.ns-TabControl > .tabs > label.selected {
+            background-color: #E0E0E0;
+        }
+
+/*
+.ns.ns-ComboBox > select {
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    border: solid 1px gray;
+}
+.ns.ns-ComboBox > input {
+    position: absolute;
+    z-index: 5;
+    border: solid 1px gray;
+    border-right: none;
+    padding-left: 3px;
+    font: inherit;
+}
+.ns.ns-ComboBox > input:focus {
+    outline: none;
+}
+*/
+
+.ns.ns-ListView {
+    /*outline: none;*/
+    border: solid 1px silver;
+    /*border: solid 1px ThreeDLightShadow;*/
+}
+    .ns.ns-ListView > .item {
+        padding: 8px;
+    }
+    .ns.ns-ListView > .item.selected {
+        background-color: #2962ff;
+        background-color: Highlight;
+        color: white;
+        color: HighlightText;
+    }
+
+.ns-Link {
+    cursor: pointer;
+}
+.ns-Link.notvisited, .ns-Link.autovisit {
+    color: #0000EE;
+}
+.ns-Link.visited, .ns-Link.autovisit:visited {
+    color: #551A8B;
+}
+.ns-Link:focus, .ns-Link:active {
+    outline: none !important;
+    color: #EE0000 !important;
+}
+
+.ns.nm-Menu {
+    border: solid 1px #DDDDDD;
+    background-color: white;
+    color: black;
+    min-height: 1em;
+    min-width: 1em;
+    box-shadow: 3px 3px 5px #BBBBBB;
+}
+    .ns.nm-Menu .nmi {
+        position: relative;
+        min-height: 1em;
+        min-width: 1em;
+        padding: 4px 8px;
+    }
+        .ns.nm-Menu .nmi.sel {
+            background-color: #D9E1E3 !important;
+        }
+    .ns.nm-Menu .nmi.disabled {
+        color: gray;
+    }
+    .ns.nm-Menu .nmi:hover {
+        background-color: #EEEEEE;
+    }
+    .ns.nm-Menu .nmi.sep {
+        min-height: auto;
+        padding: 0;
+        margin: 0.25em;
+        height: 0;
+        border-bottom: solid 1px #DDDDDD;
+    }
+    .ns.nm-Menu .nmi.sep:hover, .ns.nm-Menu .nmi.disabled:hover {
+        background-color: inherit;
+    }
+    .ns.nm-Menu .nmi.sub .text {
+        margin-right: 1em;
+    }
+    .ns.nm-Menu .nmi.sub .text::after {
+        display: block;
+        position: absolute;
+        width: 0.5em;
+        content: '\203A';
+        font-family: courier;
+        font-size: 14pt;
+        right: 0.4em;
+        top: 0.1em;
+    }
+
+.ns-Surface.design {
+    outline: 1px dashed #60606030 !important;
+}
+.ns-Surface.design.hidden {
+    display: block !important;
+    opacity: 0.5;
+}
+.ns-Surface.design, .ns-Surface.design::after {
+    cursor: default !important;
+}
+    .ns-Surface >.ns.client {
+        cursor: inherit !important;
+    }
+/*.ns-Surface.container.design {
+}*/
+    .ns-Surface.container.design, .ns-Surface.container.design >.ns.client {
+        background-origin: border-box;
+        background-size: 16px 16px;
+        background-image: linear-gradient(to left, #20202010 1px, transparent 1px), linear-gradient(to top, #20202010 1px, transparent 1px);
+    }
+.design-outline {
+    background-color: transparent;
+    z-index: 16777271;
+    mix-blend-mode: difference;
+    border: dotted 2px #7f7f7f;
+}
+.design-resize {
+    z-index: 16777271;
+    cursor: nwse-resize;
+    background-color: #f57f17;
+    border: solid 1px #fff59d;
+    mix-blend-mode: difference;
+    opacity: 0.75;
+}
+
+/* Allow this to override the design-resize overlay. */
+.resize-grip::after {
+    content: " ";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    /*background-color: gray;*/
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAr0lEQVQ4y8XSuQrCYBAE4C9R8cAjTbwaC19Aff9nsbQXLEQEbfYHCYmYNG67OzszO8u/q9dyPgvMEgPc85YL8gBv8eyidokThqFG/0dwHyU2OOOBVxvmFY4YJ2YtmNcBXnTxvMYBsy7MSfasEmMeaiYpljrmMqI641bpF9jHHzQ+ySkO9tnLgvkYS1RjTE+SorpXFhTY4YJrne/keVhzsHmoKr4dc4Fpw8CoS4w/1Rvleg71EXTrfgAAAABJRU5ErkJggg==);
+    z-index: 110;
+    cursor: nwse-resize;
+}
+.resize-grip.minimized::after, .resize-grip.maximized::after {
+    display: none;
+}
+
+.ns.disabled, .ns.disabled * {
+    cursor: not-allowed;
+    /* pointer-events: none; */
+    color: #757575;
+    text-shadow: 1px 1px 1px #e0e0e0;
+}
