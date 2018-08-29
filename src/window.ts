@@ -642,7 +642,11 @@ export class Window extends workspace.Workspace implements base.IWindow {
         if (this.isActive()) {
             // Make sure it's in front,
             // a new non-activated window can incorrectly overlap otherwise.
-            if (!donow) {
+            let parent = this.getParent();
+            if (parent && this === parent.lastChild()) {
+                if (sf)
+                    this.setSelected(sf);
+            } else if (!donow) {
                 setTimeout(() => {
                     if (this.isActive()) {
                         this.bringToFront();
@@ -650,8 +654,7 @@ export class Window extends workspace.Workspace implements base.IWindow {
                             this.setSelected(sf);
                     }
                 }, 111);
-            }
-            else {
+            } else {
                 this.bringToFront();
                 if (sf)
                     this.setSelected(sf);
