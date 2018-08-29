@@ -25,7 +25,8 @@ export class Card extends panel.Panel {
         if (yes) {
             // Note: the card border is outside the client, but within the card itself.
             this.addClassCSS("card-border");
-            this.setPadding(util.Padding.fixed(4));
+            //this.setPadding(util.Padding.fixed(4));
+            this.setPadding(new util.Padding(3, 0, 3, 5));
         }
         else {
             this.removeClassCSS("card-border");
