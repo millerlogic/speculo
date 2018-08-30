@@ -248,6 +248,13 @@ export class Surface extends _Elem implements base.ISurface {
         );
     }
 
+    setScrollOffset(pt: util.Point): void {
+        if (!this.isCreated())
+            return;
+        this.eclient.scrollLeft = pt.x;
+        this.eclient.scrollTop = pt.y;
+    }
+
     // Content area as if scrolling were enabled.
     getContentBounds(): util.Bounds {
         // There's no concept of scrolling if not created...

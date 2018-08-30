@@ -74,6 +74,7 @@ export interface ISurface {
     getStyle(): StyleFlags
     isInputKey(key: IKey): boolean
     getScrollOffset(): util.Point
+    setScrollOffset(pt: util.Point): void
     getContentBounds(): util.Bounds
     getDesignMode(): boolean // Query only, not all support it.
 }
