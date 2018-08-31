@@ -41,7 +41,7 @@ export class Button extends surface.Surface implements util.IAction {
         //
     }
 
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         this.performAction(this);
     }
 

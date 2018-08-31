@@ -138,7 +138,7 @@ export class ListView extends surface.Surface implements util.IScrollable {
         return e;
     }
 
-    private _md(ea: surface.SurfaceMouseEvent): void {
+    private _md(ea: surface.SurfacePointerEvent): void {
         let target: HTMLElement | null = ea.target as HTMLElement | null;
         if (target && target.matches(".item")) {
             if (ea.ctrlKey) {
@@ -161,12 +161,12 @@ export class ListView extends surface.Surface implements util.IScrollable {
 
     private _mdh = false;
 
-    onMouseDown(ea: surface.SurfaceMouseEvent): void {
+    onPointerDown(ea: surface.SurfacePointerEvent): void {
         this._md(ea);
         this._mdh = true;
     }
 
-    onClick(ea: surface.SurfaceMouseEvent): void {
+    onClick(ea: surface.SurfacePointerEvent): void {
         if (!this._mdh)
             this._md(ea);
         this._mdh = false;

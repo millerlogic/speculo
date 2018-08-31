@@ -96,22 +96,36 @@ export class EventDispatcher {
         deskev("click", (ev) => {
             let sf = sfev(ev);
             if (sf)
-                sf['onClick'](sf['_toSME'](ev));
+                sf['onClick'](sf['_toSPE'](ev));
         });
         deskev("mousedown", (ev) => {
             let sf = sfev(ev);
             if (sf)
-                sf['onMouseDown'](sf['_toSME'](ev));
+                sf['onPointerDown'](sf['_toSPE'](ev));
         });
         deskev("mouseup", (ev) => {
             let sf = sfev(ev);
             if (sf)
-                sf['onMouseUp'](sf['_toSME'](ev));
+                sf['onPointerUp'](sf['_toSPE'](ev));
         });
+        /*
+        deskev("touchstart", (ev) => {
+            //ev.preventDefault();
+            let sf = sfev(ev);
+            if (sf)
+                sf['onPointerDown'](sf['_toSPE'](ev));
+        });
+        deskev("touchend", (ev) => {
+            //ev.preventDefault(); // blocks click...
+            let sf = sfev(ev);
+            if (sf)
+                sf['onPointerUp'](sf['_toSPE'](ev));
+        });
+        */
         deskev("contextmenu", (ev) => {
             let sf = sfev(ev);
             if (sf)
-                sf['onContextMenu'](sf['_toSME'](ev));
+                sf['onContextMenu'](sf['_toSPE'](ev));
         });
         // https://github.com/Microsoft/TypeScript/issues/21822
         deskev("focusin" as any, (ev) => {

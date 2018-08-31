@@ -90,8 +90,21 @@ export class _Elem {
 }
 
 
-export interface SurfaceMouseEvent extends MouseEvent {
+export interface SurfacePointerEvent extends UIEvent {
     readonly surfacePoint: util.IPoint // Coordinates relative to the surface client area.
+    readonly altKey: boolean
+    readonly ctrlKey: boolean
+    readonly metaKey: boolean
+    readonly shiftKey: boolean
+    readonly pageX: number
+    readonly pageY: number
+    // undefined if not applicable: (touch)
+    readonly button?: number
+    readonly buttons?: number
+    // undefined if not applicable: (mouse)
+    readonly targetTouches?: TouchList;
+    readonly changedTouches?: TouchList;
+    readonly touches?: TouchList;
 }
 
 
@@ -613,12 +626,12 @@ export class Surface extends _Elem implements base.ISurface {
         return true;
     }
 
-    onClick(ev: SurfaceMouseEvent): void {
+    onClick(ev: SurfacePointerEvent): void {
         //console.log("surfacePoint", this, ev.surfacePoint, ev);
     }
-    onMouseDown(ev: SurfaceMouseEvent): void { }
-    onMouseUp(ev: SurfaceMouseEvent): void { }
-    onContextMenu(ev: SurfaceMouseEvent): void {
+    onPointerDown(ev: SurfacePointerEvent): void { }
+    onPointerUp(ev: SurfacePointerEvent): void { }
+    onContextMenu(ev: SurfacePointerEvent): void {
         ev.preventDefault();
     }
     onGotFocus(ev: FocusEvent): void { }
@@ -626,11 +639,16 @@ export class Surface extends _Elem implements base.ISurface {
     onKeyDown(ev: KeyboardEvent): void { }
     onKeyUp(ev: KeyboardEvent): void { }
 
-    private _toSME(ev: MouseEvent): SurfaceMouseEvent {
+    private _toSPE(ev: MouseEvent | TouchEvent): SurfacePointerEvent {
         let aev = ev as any;
         let eb = this.eclient.getBoundingClientRect();
+        if (aev.touches) {
+            let t = aev.touches.length ? aev.touches : aev.changedTouches;
+            aev.pageX = t[0].pageX;
+            aev.pageY = t[0].pageY;
+        }
         aev.surfacePoint = new util.Point(
-            ev.pageX - eb.left - window.scrollX, ev.pageY - eb.top - window.scrollY
+            aev.pageX - eb.left - window.scrollX, aev.pageY - eb.top - window.scrollY
         );
         return aev;
     }

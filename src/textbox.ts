@@ -82,7 +82,7 @@ class _Input extends surface.Surface {
         return super.isInputKey(key);
     }
 
-    onContextMenu(ev: MouseEvent): void {
+    onContextMenu(ev: surface.SurfacePointerEvent): void {
         // Allow.
     }
 

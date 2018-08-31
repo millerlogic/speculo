@@ -130,7 +130,7 @@ export class Link extends Label implements util.IAction {
         }
     }
 
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         ev.preventDefault(); // Don't follow the link.
         this.performAction(this);
     }

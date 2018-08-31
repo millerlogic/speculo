@@ -27,7 +27,7 @@ export class MenuItem extends surface._Elem implements base.IMenuItem, util.IAct
                 return;
             let d = this._owner ? this._owner['_disp'].getDesktop() : undefined;
             if (d instanceof surface.Surface)
-                this.onClick(d['_toSME'](ev));
+                this.onClick(d['_toSPE'](ev));
         });
     }
 
@@ -86,7 +86,7 @@ export class MenuItem extends surface._Elem implements base.IMenuItem, util.IAct
     }
 
     // The SurfaceMouseEvent.surfacePoint is relative to the desktop.
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         let disp = this._owner ? this._owner['_disp'] : undefined;
         if (this._sub) {
             this.showSubMenu(ev.surfacePoint);

@@ -108,7 +108,7 @@ export class TabControl extends surface.Surface {
         //console.log("onSelectedIndexChanged", this.getSelectedIndex());
     }
 
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         if (ev.target !== this.e && ev.target !== this.eclient && ev.target !== this._etabs) {
             let selidx = this.getSelectedIndex();
             if (selidx != -1) {

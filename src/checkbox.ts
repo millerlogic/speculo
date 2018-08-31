@@ -151,7 +151,7 @@ export class CheckBox extends _CheckInput implements ICheckable {
         this.onUserInput(ev);
     }
 
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         if (ev.target !== this.input)
             this._uchk(ev);
     }
@@ -194,7 +194,7 @@ export class RadioButton extends _CheckInput implements ICheckable {
         }
     }
 
-    onClick(ev: surface.SurfaceMouseEvent): void {
+    onClick(ev: surface.SurfacePointerEvent): void {
         if (ev.target !== this.input)
             this._uchk(ev);
     }

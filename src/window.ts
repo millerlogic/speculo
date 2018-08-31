@@ -380,9 +380,9 @@ export class Window extends workspace.Workspace implements base.IWindow {
         this.winstyle.onWindowStyleChanged(this, WindowStyleFlags.ContainerResized);
     }
 
-    private static _windrag?: base.IWindow;
+    private static _windrag?: Window;
     private static _windragwhat = 0; // 0=no, 1=move, 2=resize.
-    private static _windragbtn = -1;
+    private static _windragbtn?= -1;
     private static _windragx = 0;
     private static _windragy = 0;
     private static _windragw = 0;
@@ -412,18 +412,20 @@ export class Window extends workspace.Workspace implements base.IWindow {
         ev.stopPropagation();
     }
 
-    private static _windragmm(ev: MouseEvent): void {
-        if (!Window._windrag || ev.buttons === 0) {
+    private static _windragmm(ev: MouseEvent | TouchEvent): void {
+        if (!Window._windrag || (ev as any).buttons === 0) {
             // ev.buttons isn't supported on Safari? so don't rely on it.
             window.removeEventListener("mousemove", Window._windragmm);
+            window.removeEventListener("touchmove", Window._windragmm);
             Window._windrag = undefined;
             Window._windragbtn = -1;
             return;
         }
-        Window._windragfn(ev);
+        Window._windragfn(Window._windrag['_toSPE'](ev));
     }
 
-    private _windragstart(what: number, ev: surface.SurfaceMouseEvent): void {
+    private _windragstart(what: number, ev: surface.SurfacePointerEvent): void {
+        //console.log("_windragstart", what, ev);
         let b = this.getBounds();
         Window._windragx = ev.pageX - b.x;
         Window._windragy = ev.pageY - b.y;
@@ -433,6 +435,7 @@ export class Window extends workspace.Workspace implements base.IWindow {
         Window._windragwhat = what;
         Window._windrag = this;
         window.addEventListener("mousemove", Window._windragmm);
+        window.addEventListener("touchmove", Window._windragmm);
     }
 
     private _isOuterPoint(pt: util.IPoint): boolean {
@@ -447,7 +450,7 @@ export class Window extends workspace.Workspace implements base.IWindow {
         return true;
     }
 
-    onMouseDown(ev: surface.SurfaceMouseEvent): void {
+    onPointerDown(ev: surface.SurfacePointerEvent): void {
         if (!this._isOuterPoint(ev.surfacePoint)) {
             ev.preventDefault();
             ev.stopPropagation();
@@ -472,17 +475,17 @@ export class Window extends workspace.Workspace implements base.IWindow {
                 }
             }
         }
-        super.onMouseDown(ev);
+        super.onPointerDown(ev);
     }
 
-    onMouseUp(ev: surface.SurfaceMouseEvent): void {
+    onPointerUp(ev: surface.SurfacePointerEvent): void {
         if (Window._windrag && ev.button == Window._windragbtn) {
             Window._windrag = undefined;
             ev.preventDefault();
             ev.stopPropagation();
             return;
         }
-        super.onMouseUp(ev);
+        super.onPointerUp(ev);
     }
 
     nextWindow(): Window | null {
