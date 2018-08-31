@@ -98,30 +98,47 @@ export class EventDispatcher {
             if (sf)
                 sf['onClick'](sf['_toSPE'](ev));
         });
+        let notMouse = 0;
         deskev("mousedown", (ev) => {
+            //console.log("mousedown", !notMouse);
+            if (notMouse)
+                return;
             let sf = sfev(ev);
             if (sf)
                 sf['onPointerDown'](sf['_toSPE'](ev));
         });
         deskev("mouseup", (ev) => {
+            //console.log("mouseup", !notMouse);
+            if (notMouse)
+                return;
             let sf = sfev(ev);
             if (sf)
                 sf['onPointerUp'](sf['_toSPE'](ev));
         });
-        /*
         deskev("touchstart", (ev) => {
+            //console.log("touchstart");
             //ev.preventDefault();
-            let sf = sfev(ev);
-            if (sf)
-                sf['onPointerDown'](sf['_toSPE'](ev));
+            notMouse++;
+            try {
+                let sf = sfev(ev);
+                if (sf)
+                    sf['onPointerDown'](sf['_toSPE'](ev));
+            } finally {
+                setTimeout(() => { notMouse--; }, 50);
+            }
         });
         deskev("touchend", (ev) => {
+            //console.log("touchend");
             //ev.preventDefault(); // blocks click...
-            let sf = sfev(ev);
-            if (sf)
-                sf['onPointerUp'](sf['_toSPE'](ev));
+            notMouse++;
+            try {
+                let sf = sfev(ev);
+                if (sf)
+                    sf['onPointerUp'](sf['_toSPE'](ev));
+            } finally {
+                setTimeout(() => { notMouse--; }, 50);
+            }
         });
-        */
         deskev("contextmenu", (ev) => {
             let sf = sfev(ev);
             if (sf)

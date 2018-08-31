@@ -89,7 +89,7 @@ export class Desktop extends workspace.Workspace implements base.IDesktop {
 
     protected setup(): void {
         super.setup();
-        this.e.addEventListener("mousedown", (ev) => {
+        let tapfunc = (ev: UIEvent) => {
             if (menu.anyMenusOpen()) {
                 let disp = this.getDisplay();
                 if (disp instanceof display.Display) {
@@ -97,7 +97,9 @@ export class Desktop extends workspace.Workspace implements base.IDesktop {
                         menu.dismissAll(disp);
                 }
             }
-        });
+        };
+        this.e.addEventListener("mousedown", tapfunc);
+        this.e.addEventListener("touchstart", tapfunc);
         /*this.e.addEventListener("drop", (ev) => {
             ev.preventDefault();
         });

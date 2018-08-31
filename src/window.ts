@@ -452,7 +452,6 @@ export class Window extends workspace.Workspace implements base.IWindow {
 
     onPointerDown(ev: surface.SurfacePointerEvent): void {
         if (!this._isOuterPoint(ev.surfacePoint)) {
-            ev.preventDefault();
             ev.stopPropagation();
             if (this.getWindowState() != base.WindowState.Normal)
                 return;
@@ -481,7 +480,6 @@ export class Window extends workspace.Workspace implements base.IWindow {
     onPointerUp(ev: surface.SurfacePointerEvent): void {
         if (Window._windrag && ev.button == Window._windragbtn) {
             Window._windrag = undefined;
-            ev.preventDefault();
             ev.stopPropagation();
             return;
         }
