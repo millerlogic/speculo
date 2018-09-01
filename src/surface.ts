@@ -117,17 +117,14 @@ export class Surface extends _Elem implements base.ISurface {
     private _cpad: util.Padding = util.Padding.zero // Content area padding.
     private _parent: Surface | null = null
     private _id: number
-    private _state = 0 // 0=new, 1=created, 2=destroyed.
+    private _state = 0 // 0=new, 1=created, 2=recreating, 3=destroyed.
 
     constructor(disp: base.IDisplay, surface_id: number, e?: HTMLElement) {
         super(e ? e : document.createElement("div"));
         this._disp = disp;
         this._id = surface_id;
         this.eclient = this.e;
-        this.setup();
-    }
-
-    protected setup(): void {
+        // Setup:
         var s = this._disp.getName() + "-" + this._id;
         this.e.setAttribute("data-surface", s);
         this.addClassCSS(s);
@@ -138,20 +135,17 @@ export class Surface extends _Elem implements base.ISurface {
         }
     }
 
-    private _sfcreate(): void {
+    // It is safe to call this at any time to ensure the surface is in the created state.
+    // If this is not called explicitly, create is called implicitly when the parent is set.
+    // When overriding, be sure to call super.create(), otherwise the surface won't be considered as created.
+    create(): void {
+        if (this.isCreated())
+            return;
         if (this.getStyle() & base.StyleFlags.Selectable)
             this.eclient.tabIndex = 0; // Allow tabbing from browser controls.
         if (this.getStyle() & base.StyleFlags.Container)
             this.addClassCSS("container");
         this._state = 1;
-    }
-
-    // It is safe to call this at any time to ensure the surface is in the created state.
-    // If this is not called explicitly, this is implicitly called when the parent is set.
-    create(): void {
-        if (!this.isCreated()) {
-            this._sfcreate();
-        }
     }
 
     isCreated(): boolean {
@@ -471,9 +465,11 @@ export class Surface extends _Elem implements base.ISurface {
 
     // Not all surface classes support being recreated, and not all properties might be preserved.
     // This is not a general-purpose feature, it's meant to facilitate recreating when it is necessary.
+    // Calls create() when the recreated surface is ready.
     protected recreate(e: HTMLElement, eclient: HTMLElement): void {
-        if (this._state == 2)
+        if (this._state == 3)
             throw new base.DisplayError("Surface was destroyed");
+        this._state = 2;
         let text = this.getText();
         let f = this.hasFocus();
         let cnext = this.nextSibling();
@@ -494,7 +490,7 @@ export class Surface extends _Elem implements base.ISurface {
         }
         this.e = e;
         this.eclient = eclient;
-        this._sfcreate();
+        this.create();
         this._applyBounds(this._parent);
         this.setText(text);
         if (f)
@@ -504,7 +500,7 @@ export class Surface extends _Elem implements base.ISurface {
     // Note: a destroyed surface is removed from its siblings and its parent's children,
     // but getParent continues to return the same parent.
     destroy(): void {
-        if (this._state == 2)
+        if (this._state == 3)
             return;
         // Destroy previous child so we can iterate siblings properly.
         let sfprev: base.ISurface | null = null;
@@ -518,7 +514,7 @@ export class Surface extends _Elem implements base.ISurface {
         if (this._parent)
             this._parent.eclient.removeChild(this.e);
         this._disp.surfaces.remove(this._id);
-        this._state = 2;
+        this._state = 3;
     }
 
     getVisible(): boolean {

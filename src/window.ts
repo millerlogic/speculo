@@ -368,14 +368,6 @@ export class Window extends workspace.Workspace implements base.IWindow {
         this.winstyle.onWindowStyleChanged(this, WindowStyleFlags.WindowState);
     }
 
-    create(): void {
-        if (!this.isCreated()) {
-            this.winstyle.onWindowStyleChanging(this, WindowStyleFlags.WindowCreate, undefined);
-            super.create();
-            this.winstyle.onWindowStyleChanged(this, WindowStyleFlags.WindowCreate);
-        }
-    }
-
     onContainerResized(area: util.Bounds): void {
         this.winstyle.onWindowStyleChanged(this, WindowStyleFlags.ContainerResized);
     }
@@ -828,8 +820,13 @@ export class Window extends workspace.Workspace implements base.IWindow {
 
     private fiframe: HTMLIFrameElement | undefined // Focused iframe.
 
-    protected setup(): void {
-        super.setup();
+    create(): void {
+        if (this.isCreated())
+            return;
+        this.winstyle.onWindowStyleChanging(this, WindowStyleFlags.WindowCreate, undefined);
+        super.create();
+        this.winstyle.onWindowStyleChanged(this, WindowStyleFlags.WindowCreate);
+        // Events:
         this.e.addEventListener("mousedown", (ev: MouseEvent) => {
             let sf = surface.Surface.fromElement(ev.target as HTMLElement, this.getDisplay());
             this.activate(sf === this || !sf ? undefined : sf);

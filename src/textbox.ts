@@ -15,22 +15,6 @@ class _Input extends surface.Surface {
     constructor(disp: base.IDisplay, surface_id: number) {
         super(disp, surface_id, document.createElement("input"));
         this.style |= base.StyleFlags.Selectable | base.StyleFlags.AutoSelect;
-        this._tbsetup();
-    }
-
-    private _tbsetup() {
-        this.e.setAttribute("autocomplete", "off");
-    }
-
-    protected recreate(e: HTMLElement, eclient: HTMLElement): void {
-        let maxlen = (this.e as any).maxLength;
-        if (maxlen >= 0)
-            (e as any).maxLength = maxlen;
-        e.setAttribute("placeholder", this.e.getAttribute("placeholder") || "");
-        if (this.getReadonly())
-            e.setAttribute("readonly", "readonly");
-        super.recreate(e, eclient);
-        this._tbsetup();
     }
 
     getText(): string {
@@ -88,8 +72,21 @@ class _Input extends surface.Surface {
 
     onUserInput(ev: Event): void { }
 
-    protected setup(): void {
-        super.setup();
+    protected recreate(e: HTMLElement, eclient: HTMLElement): void {
+        let maxlen = (this.e as any).maxLength;
+        if (maxlen >= 0)
+            (e as any).maxLength = maxlen;
+        e.setAttribute("placeholder", this.e.getAttribute("placeholder") || "");
+        if (this.getReadonly())
+            e.setAttribute("readonly", "readonly");
+        super.recreate(e, eclient);
+    }
+
+    create(): void {
+        if (this.isCreated())
+            return;
+        super.create();
+        this.e.setAttribute("autocomplete", "off");
         let gotinput = false;
         this.e.addEventListener("input", (ev) => {
             gotinput = true;
@@ -107,12 +104,6 @@ class _Input extends surface.Surface {
 export class TextBox extends _Input implements util.IScrollable {
     static SurfaceClassName = "TextBox";
 
-    protected recreate(e: HTMLElement, eclient: HTMLElement): void {
-        if (!this.getWrap())
-            e.setAttribute("wrap", "off");
-        super.recreate(e, eclient);
-    }
-
     setMultiline(x: boolean) {
         if (x == this.getMultiline())
             return;
@@ -122,6 +113,12 @@ export class TextBox extends _Input implements util.IScrollable {
 
     getMultiline(): boolean {
         return this.matches("textarea");
+    }
+
+    protected recreate(e: HTMLElement, eclient: HTMLElement): void {
+        if (!this.getWrap())
+            e.setAttribute("wrap", "off");
+        super.recreate(e, eclient);
     }
 
     create(): void {

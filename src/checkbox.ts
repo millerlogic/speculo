@@ -121,8 +121,10 @@ class _CheckInput extends surface.Surface {
 
     onUserInput(ev: Event): void { }
 
-    protected setup(): void {
-        super.setup();
+    create(): void {
+        if (this.isCreated())
+            return;
+        super.create();
         this.e.addEventListener("change", (ev) => this.onUserInput(ev));
     }
 

@@ -87,8 +87,10 @@ export class Desktop extends workspace.Workspace implements base.IDesktop {
         });
     }
 
-    protected setup(): void {
-        super.setup();
+    create(): void {
+        if (this.isCreated())
+            return;
+        super.create();
         let tapfunc = (ev: UIEvent) => {
             if (menu.anyMenusOpen()) {
                 let disp = this.getDisplay();

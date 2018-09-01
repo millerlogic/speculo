@@ -78,8 +78,10 @@ export class Choice extends surface.Surface {
 
     onSelectedIndexChanged(): void { }
 
-    protected setup(): void {
-        super.setup();
+    create(): void {
+        if (this.isCreated())
+            return;
+        super.create();
         let gotinput = false;
         this.e.addEventListener("input", (ev) => {
             gotinput = true;
