@@ -64,10 +64,10 @@ export class TabControl extends surface.Surface {
         let newtab = this.tabs.get(index);
         if (newtab) {
             newtab.setBounds(util.getClientBounds(this));
-            newtab['_tshow'](true);
+            newtab.setVisible(true);
         }
         if (oldtab) {
-            oldtab['_tshow'](false);
+            oldtab.setVisible(false);
         }
         this.onSelectedIndexChanged();
     }
@@ -133,7 +133,7 @@ export class TabControl extends surface.Surface {
                 throw new TypeError("Tab expected");
             if (vNew.getParent())
                 throw new TypeError("Tab already in use");
-            vNew['_tshow'](false);
+            vNew.setVisible(false);
             vNew.setParent(this);
             this._etabs.insertBefore(vNew['label'], this._etabs.children[index] || null);
             if (index <= this._seltab) {
@@ -143,7 +143,7 @@ export class TabControl extends surface.Surface {
             } else if (this._seltab == -1) {
                 this._seltab = 0;
                 vNew.setBounds(util.getClientBounds(this));
-                vNew['_tshow'](true);
+                vNew.setVisible(true);
                 this.onSelectedIndexChanged();
             }
         } else if (action === util.MapAction.Replace) {
@@ -157,12 +157,12 @@ export class TabControl extends surface.Surface {
                 vOld.setParent(null);
                 this._etabs.removeChild(vOld['label']);
             }
-            vNew['_tshow'](false);
+            vNew.setVisible(false);
             vNew.setParent(this);
             this._etabs.insertBefore(vNew['label'], this._etabs.children[index] || null);
             if (index === this._seltab) {
                 vNew.setBounds(util.getClientBounds(this));
-                vNew['_tshow'](true);
+                vNew.setVisible(true);
                 this.onSelectedIndexChanged(); // It's a different tab now, so...
             }
         } else if (action === util.MapAction.Remove) {
@@ -179,7 +179,7 @@ export class TabControl extends surface.Surface {
                 let newt = this.tabs.get(index + 1);
                 if (newt) {
                     newt.setBounds(util.getClientBounds(this));
-                    newt['_tshow'](true);
+                    newt.setVisible(true);
                 }
                 this.onSelectedIndexChanged();
             }
@@ -217,20 +217,20 @@ export class Tab extends workspace.Workspace {
         this.label.innerText = text;
     }
 
-    private _tshow(x: boolean): void {
+    setVisible(x: boolean): void {
+        let tc = this.getParent();
+        let tidx = this.getTabIndex();
+        let selidx = (tc instanceof TabControl) ? tc.getSelectedIndex() : -1;
+        if (x && tidx != -1 && selidx != tidx)
+            return; // Don't allow setting visible if it's not the selected tab.
         super.setVisible(x);
         if (x) {
             surface.addClassCSS(this.label, "selected");
-            let tc = this.getParent();
             if (tc instanceof TabControl) // Scroll the tab label into view:
                 tc['_etabs'].scrollLeft = this.label.offsetLeft - tc.getBounds().width / 4;
         } else {
             surface.removeClassCSS(this.label, "selected");
         }
-    }
-
-    setVisible(x: boolean): void {
-        //
     }
 
 }
