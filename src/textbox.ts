@@ -7,57 +7,56 @@
 import * as base from "./base";
 import * as util from "./util";
 import * as surface from "./surface";
-import * as scrollable from "./scrollable"
 
 
 class _Input extends surface.Surface {
 
-    constructor(disp: base.IDisplay, surface_id: number) {
-        super(disp, surface_id, document.createElement("input"));
+    constructor(disp: base.IDisplay, surface_id: number, e?: HTMLElement) {
+        super(disp, surface_id, e ? e : document.createElement("input"));
         this.style |= base.StyleFlags.Selectable | base.StyleFlags.AutoSelect;
     }
 
     getText(): string {
-        return (this.e as any).value;
+        return (this.eclient as any).value;
     }
 
     setText(text: string): void {
         let ml = this.getMaxLength();
         //if (ml != -1 && text.length > ml)
         //    text = text.substring(0, ml);
-        (this.e as any).value = text;
+        (this.eclient as any).value = text;
     }
 
     // -1 if no limit.
     getMaxLength(): number {
-        return (this.e as any).maxLength;
+        return (this.eclient as any).maxLength;
     }
 
     setMaxLength(n: number): void {
         if (n >= 0)
-            (this.e as any).maxLength = n;
+            (this.eclient as any).maxLength = n;
         else
-            this.e.removeAttribute("maxLength");
+            this.eclient.removeAttribute("maxLength");
     }
 
     getPlaceholder(): string {
-        return this.e.getAttribute("placeholder") || "";
+        return this.eclient.getAttribute("placeholder") || "";
     }
 
     setPlaceholder(s: string): void {
-        this.e.setAttribute("placeholder", s);
+        this.eclient.setAttribute("placeholder", s);
     }
 
     getReadonly(): boolean {
-        return this.e.hasAttribute("readonly");
+        return this.eclient.hasAttribute("readonly");
     }
 
     // Note: this may not work for some input types, such as color.
     setReadonly(x: boolean): void {
         if (x)
-            this.e.setAttribute("readonly", "readonly");
+            this.eclient.setAttribute("readonly", "readonly");
         else
-            this.e.removeAttribute("readonly");
+            this.eclient.removeAttribute("readonly");
     }
 
     isInputKey(key: base.IKey): boolean {
@@ -73,10 +72,10 @@ class _Input extends surface.Surface {
     onUserInput(ev: Event): void { }
 
     protected recreate(e: HTMLElement, eclient: HTMLElement): void {
-        let maxlen = (this.e as any).maxLength;
+        let maxlen = (this.eclient as any).maxLength;
         if (maxlen >= 0)
             (e as any).maxLength = maxlen;
-        e.setAttribute("placeholder", this.e.getAttribute("placeholder") || "");
+        e.setAttribute("placeholder", this.eclient.getAttribute("placeholder") || "");
         if (this.getReadonly())
             e.setAttribute("readonly", "readonly");
         super.recreate(e, eclient);
@@ -86,13 +85,13 @@ class _Input extends surface.Surface {
         if (this.isCreated())
             return;
         super.create();
-        this.e.setAttribute("autocomplete", "off");
+        this.eclient.setAttribute("autocomplete", "off");
         let gotinput = false;
-        this.e.addEventListener("input", (ev) => {
+        this.eclient.addEventListener("input", (ev) => {
             gotinput = true;
             this.onUserInput(ev);
         });
-        this.e.addEventListener("change", (ev) => {
+        this.eclient.addEventListener("change", (ev) => {
             if (!gotinput)
                 this.onUserInput(ev);
         });
@@ -130,19 +129,41 @@ export class TextBox extends _Input implements util.IScrollable {
 
     selectAll(yes = true): void {
         if (yes) {
-            this.setSelection(0, this.getText().length);
+            this.setSelection(0, this.getEnd());
         } else {
             let x = this.getSelectionStart();
             this.setSelection(x, x);
         }
     }
 
+    // The starting point of the selection.
+    // For compatibility across various TextBox implementations,
+    // selection point values should be treated as abstract values.
+    // Can be compared for ordering; 0 is the start of the text box, getEnd() is the end.
     getSelectionStart(): number {
-        return (this.e as any).selectionStart;
+        return (this.eclient as any).selectionStart;
     }
 
+    // The ending point of the selection; see getSelectionStart.
     getSelectionEnd(): number {
-        return (this.e as any).selectionEnd;
+        return (this.eclient as any).selectionEnd;
+    }
+
+    // Set the selection; see getSelectionStart.
+    setSelection(start: number, end = start): void {
+        (this.eclient as any).selectionStart = start;
+        (this.eclient as any).selectionEnd = end;
+    }
+
+    // Get the length of the whole text; also see getEnd()
+    getTextLength(): number {
+        return this.getText().length;
+    }
+
+    // Get the ending point of the whole text, can be used as a selection point.
+    // The starting point of the whole text is always 0.
+    getEnd(): number {
+        return this.getTextLength();
     }
 
     getSelectedText(): string {
@@ -151,30 +172,23 @@ export class TextBox extends _Input implements util.IScrollable {
             this.getSelectionEnd())
     }
 
-    setSelection(start?: number, end?: number) {
-        if (start !== undefined)
-            (this.e as any).selectionStart = start;
-        if (end !== undefined)
-            (this.e as any).selectionEnd = end;
-    }
-
-    setSelectedText(s: string) {
+    setSelectedText(s: string): void {
         let start = this.getSelectionStart();
         let end = this.getSelectionEnd();
         let text = this.getText();
-        let scrollX = this.e.scrollLeft;
-        let scrollY = this.e.scrollTop;
+        let scrollX = this.eclient.scrollLeft;
+        let scrollY = this.eclient.scrollTop;
         text = text.substring(0, start) + s + text.substring(end);
         this.setText(text);
         let newsel = start + s.length;
         this.setSelection(newsel, newsel);
-        this.e.scrollLeft = scrollX;
-        this.e.scrollTop = scrollY;
+        this.eclient.scrollLeft = scrollX;
+        this.eclient.scrollTop = scrollY;
     }
 
     // Select end of input and insert text.
-    appendText(s: string) {
-        let n = this.getText().length;
+    appendText(s: string): void {
+        let n = this.getEnd();
         this.setSelection(n, n);
         this.setSelectedText(s);
     }
@@ -200,14 +214,14 @@ export class TextBox extends _Input implements util.IScrollable {
     }
 
     getWrap(): boolean {
-        return this.e.getAttribute("wrap") != "off";
+        return this.eclient.getAttribute("wrap") != "off";
     }
 
     setWrap(x: boolean): void {
         if (x)
-            this.e.removeAttribute("wrap");
+            this.eclient.removeAttribute("wrap");
         else
-            this.e.setAttribute("wrap", "off");
+            this.eclient.setAttribute("wrap", "off");
     }
 
     isInputKey(key: base.IKey): boolean {
@@ -220,25 +234,25 @@ export class TextBox extends _Input implements util.IScrollable {
     }
 
     getWantReturn(): boolean {
-        return this.e.matches(".want-return");
+        return this.eclient.matches(".want-return");
     }
 
     setWantReturn(x: boolean): void {
         if (x)
-            surface.addClassCSS(this.e, "want-return");
+            surface.addClassCSS(this.eclient, "want-return");
         else
-            surface.removeClassCSS(this.e, "want-return");
+            surface.removeClassCSS(this.eclient, "want-return");
     }
 
     getWantTab(): boolean {
-        return this.e.matches(".want-tab");
+        return this.eclient.matches(".want-tab");
     }
 
     setWantTab(x: boolean): void {
         if (x)
-            surface.addClassCSS(this.e, "want-tab");
+            surface.addClassCSS(this.eclient, "want-tab");
         else
-            surface.removeClassCSS(this.e, "want-tab");
+            surface.removeClassCSS(this.eclient, "want-tab");
     }
 
     onKeyDown(ev: KeyboardEvent): void {
@@ -271,12 +285,12 @@ export class InputBox extends _Input {
                 type += "_";
         }
         super(disp, surface_id);
-        this.e.setAttribute("placeholder", ph);
-        this.e.setAttribute("type", type);
+        this.eclient.setAttribute("placeholder", ph);
+        this.eclient.setAttribute("type", type);
     }
 
     get input(): HTMLInputElement {
-        return this.e as HTMLInputElement;
+        return this.eclient as HTMLInputElement;
     }
 
 
