@@ -301,6 +301,25 @@ div.ns.ns-Window > .client {
     color: #EE0000 !important;
 }
 
+.ns-Table {
+    border: solid 1px #cccccc;
+}
+    .ns-Table > thead {
+        background-color: #cccccc;
+        color: black;
+    }
+        .ns-Table > thead > tr > td, .ns-Table > tbody > tr > td {
+            padding: 4px;
+            border-right: solid 1px #cccccc;
+            border-bottom: solid 1px #cccccc;
+        }
+        .ns-Table > thead > tr > td {
+            background-color: #cccccc;
+            color: black;
+            border-right: solid 1px #dadada;
+            border-bottom: solid 1px #dadada;
+        }
+
 .ns.nm-Menu {
     border: solid 1px #DDDDDD;
     background-color: white;
