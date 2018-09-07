@@ -198,7 +198,7 @@ export class NumberMap<Value> implements IMap<number, Value> {
         if (obj === undefined)
             throw new TypeError("Invalid value");
         if (this._b4(key, MapAction.Replace, old, obj) !== false) {
-            delete (this as any)[key];
+            (this as any)[key] = obj;
             this._af(key, MapAction.Replace, old, obj);
         }
     }
@@ -271,7 +271,7 @@ export class ArrayList<T> extends Array<T> implements IList<T> {
         if (obj === undefined)
             throw new TypeError("Invalid value");
         if (this._b4(index, MapAction.Replace, old, obj) !== false) {
-            delete (this as any)[index];
+            this[index] = obj;
             this._af(index, MapAction.Replace, old, obj);
         }
     }
