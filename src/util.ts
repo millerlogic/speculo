@@ -139,6 +139,12 @@ export interface IMap<Key, Value> {
     replace(key: Key, value: Value): void // replace on non-existent key may or may not fail.
 }
 
+export function isIMap(x: any): boolean {
+    return x instanceof Object && x && typeof x.len === "function" &&
+        typeof x.get === "function" && typeof x.insert === "function" &&
+        typeof x.remove === "function" && typeof x.replace === "function";
+}
+
 export enum MapAction {
     Insert,
     Remove,
@@ -211,6 +217,10 @@ export interface IList<T> extends IMap<number, T> {
     add(obj: T): void
     insert(index: number, obj: T): void
     remove(index: number): void
+}
+
+export function isIList(x: any): boolean {
+    return isIMap(x) && typeof x.add === "function";
 }
 
 export interface IListChange<T> extends IMapChange<number, T> {
