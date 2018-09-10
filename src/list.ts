@@ -14,7 +14,7 @@ export interface IListCtrl {
     setSelectedIndex(index: number): void
     getEList(): HTMLElement
     createEItem(): HTMLElement
-    onSelectedIndexChanged(): void
+    itemsChanged(): void
 }
 
 
@@ -83,7 +83,7 @@ export class ListItems implements util.IList<any> {
         var selidx = this.lc.getSelectedIndex();
         this.e.insertBefore(ce, this.e.children[index] || null);
         if (index <= selidx || selidx == -1)
-            this.lc.onSelectedIndexChanged();
+            this.lc.itemsChanged();
     }
 
     remove(index: number): void {
@@ -96,6 +96,7 @@ export class ListItems implements util.IList<any> {
             delete this.x[xid];
         }
         this.e.removeChild(ce);
+        this.lc.itemsChanged();
     }
 
     replace(index: number, obj: any): void {

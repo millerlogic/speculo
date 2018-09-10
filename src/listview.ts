@@ -92,7 +92,7 @@ export class ListView extends surface.Surface implements util.IScrollable {
                 this.e.scrollTop = esel.offsetTop;
             }
         }
-        this._selchg();
+        this.itemsChanged();
     }
 
     getMultiple(): boolean {
@@ -153,7 +153,7 @@ export class ListView extends surface.Surface implements util.IScrollable {
                 this._unselAll();
                 surface.addClassCSS(target, "selected");
             }
-            this._selchg();
+            this.itemsChanged();
             this.onUserInput(ea);
         }
 
@@ -183,7 +183,7 @@ export class ListView extends surface.Surface implements util.IScrollable {
 
     onSelectedIndexChanged(): void { }
 
-    private _selchg() {
+    private itemsChanged() {
         let sela = this.e.querySelectorAll(".item.selected");
         (this.selectedItems as util.ToList<Element, any>)['from'] = sela;
         let isela = 0;

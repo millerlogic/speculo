@@ -33,7 +33,7 @@ export class Choice extends surface.Surface {
     setSelectedIndex(index: number): void {
         //if (index != this.getSelectedIndex()) {
         this.select.selectedIndex = index;
-        this.onSelectedIndexChanged();
+        this.itemsChanged();
         //}
     }
 
@@ -78,6 +78,10 @@ export class Choice extends surface.Surface {
 
     onSelectedIndexChanged(): void { }
 
+    private itemsChanged() {
+        this.onSelectedIndexChanged();
+    }
+
     create(): void {
         if (this.isCreated())
             return;
@@ -85,12 +89,12 @@ export class Choice extends surface.Surface {
         let gotinput = false;
         this.e.addEventListener("input", (ev) => {
             gotinput = true;
-            this.onSelectedIndexChanged();
+            this.itemsChanged();
             this.onUserInput(ev);
         });
         this.e.addEventListener("change", (ev) => {
             if (!gotinput) {
-                this.onSelectedIndexChanged();
+                this.itemsChanged();
                 this.onUserInput(ev);
             }
         });
