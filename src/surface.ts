@@ -627,9 +627,7 @@ export class Surface extends _Elem implements base.ISurface {
     }
     onPointerDown(ev: SurfacePointerEvent): void { }
     onPointerUp(ev: SurfacePointerEvent): void { }
-    onContextMenu(ev: SurfacePointerEvent): void {
-        ev.preventDefault();
-    }
+    onContextMenu(ev: SurfacePointerEvent): void { }
     onGotFocus(ev: FocusEvent): void { }
     onLostFocus(ev: FocusEvent): void { }
     onKeyDown(ev: KeyboardEvent): void { }
