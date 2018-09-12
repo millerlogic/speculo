@@ -32,7 +32,7 @@ export class TabControl extends surface.Surface {
         super.create();
         if (!this._lheight) {
             let fh = parseFloat(surface.getCSS(this.eclient, "font-size") || "0");
-            this._lheight = Math.ceil(fh + fh / 2);
+            this._lheight = Math.ceil(fh + 12 + 2);
             this.setPadding(this.getPadding().add(0, this._lheight, 0, 0));
         }
     }

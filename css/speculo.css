@@ -240,7 +240,7 @@ div.ns.ns-Window > .client {
     }
         .ns.ns-TabControl > .tabs > label {
             display: inline-block;
-            padding: 0.25em 0.5em;
+            padding: 6px 10px;
             border: solid 1px #D3D3D3;
             margin-left: -1px; /* No border overlap. */
             margin-top: -1px;
