@@ -249,7 +249,7 @@ div.ns.ns-Window > .client {
             cursor: pointer;
         }
         .ns.ns-TabControl > .tabs > label.selected {
-            background-color: #E0E0E0;
+            background-color: #fbfbfb;
         }
 
 /*
